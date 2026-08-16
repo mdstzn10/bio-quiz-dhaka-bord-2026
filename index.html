@@ -1,104 +1,417 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>জীববিজ্ঞান MCQ — Interactive Quiz</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:"Noto Sans Bengali","Nirmala UI",sans-serif;background:#f4f7fb;color:#172033}
-header{background:linear-gradient(135deg,#0f766e,#16a34a);color:#fff;padding:22px 16px;text-align:center;position:sticky;top:0;z-index:5;box-shadow:0 4px 18px #0002}
-header h1{margin:0;font-size:24px} header p{margin:7px 0 0;opacity:.92}
-.wrap{max-width:900px;margin:20px auto;padding:0 14px}
-.info{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px;box-shadow:0 3px 14px #00000012}
-.qcard{background:#fff;border-radius:16px;margin:14px 0;overflow:hidden;box-shadow:0 3px 14px #00000012;border:1px solid #e7edf3}
-.qhead{display:flex;gap:12px;align-items:center;padding:16px;cursor:pointer;user-select:none}
-.num{min-width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#eef2f7;font-weight:800}
-.qtext{font-weight:700;line-height:1.55;flex:1}
-.status{font-size:13px;color:#64748b}
-.answer-dot{width:24px;height:24px;border-radius:50%;border:3px solid #cbd5e1;background:#fff;display:none}
-.qcard.open .answer-dot{display:block}
-.options{display:none;padding:0 16px 16px}
-.qcard.open .options{display:block}
-.option{display:flex;align-items:center;gap:10px;width:100%;padding:12px 13px;margin:8px 0;border:2px solid #e2e8f0;border-radius:12px;background:#fff;text-align:left;font:inherit;cursor:pointer;transition:.18s}
-.option:hover{transform:translateY(-1px);border-color:#94a3b8}
-.bubble{width:30px;height:30px;border-radius:50%;border:2px solid #94a3b8;display:grid;place-items:center;font-weight:800;flex:none}
-.option.correct{background:#dcfce7;border-color:#16a34a;color:#166534}
-.option.correct .bubble{background:#16a34a;color:#fff;border-color:#16a34a}
-.option.wrong{background:#fee2e2;border-color:#dc2626;color:#991b1b}
-.option.wrong .bubble{background:#dc2626;color:#fff;border-color:#dc2626}
-.feedback{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;font-weight:700}
-.feedback.show{display:block}
-.feedback.ok{background:#dcfce7;color:#166534}.feedback.no{background:#fee2e2;color:#991b1b}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
-button.ctrl{border:0;border-radius:10px;padding:10px 15px;background:#0f766e;color:#fff;font:inherit;font-weight:700;cursor:pointer}
-button.ctrl.secondary{background:#334155}
-.score{font-weight:800}
-small.note{color:#64748b}
-</style>
+    <meta charset="UTF-8">
+    <title>এসএসসি জীববিজ্ঞান ঢাকা বোর্ড ২০২৬ - কুইজ</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; max-width: 800px; margin: auto; padding-bottom: 80px; }
+        h2 { text-align: center; color: #2c3e50; }
+        .instruction { text-align: center; color: #7f8c8d; margin-bottom: 20px; }
+        .quiz-card { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .question { font-weight: bold; font-size: 1.05em; color: #34495e; }
+        .sub-q { font-weight: normal; margin-top: 5px; color: #555; }
+        .diagram { background: #f8f9fa; border: 1px dashed #ccc; padding: 10px; margin: 10px 0; font-family: monospace; white-space: pre; border-radius: 5px; }
+        .options { list-style: none; padding: 0; margin-top: 10px; }
+        .options li { margin: 6px 0; padding: 8px 12px; border-radius: 5px; cursor: pointer; background-color: #f8f9fa; border: 1px solid #ddd; transition: 0.2s; }
+        .options li:hover { background-color: #eef2f5; }
+        
+        .options li.correct-selected { background-color: #e8f5e9; border-color: #4caf50; color: #2e7d32; font-weight: bold; }
+        .options li.wrong-selected { background-color: #ffebee; border-color: #ef5350; color: #c62828; font-weight: bold; }
+        .options li.show-correct { background-color: #e8f5e9; border-color: #4caf50; color: #2e7d32; font-weight: bold; }
+        .options li.disabled { pointer-events: none; }
+        
+        .explanation { display: none; margin-top: 10px; padding: 10px; background-color: #e8f5e9; border-left: 4px solid #4caf50; font-size: 0.9em; color: #2e7d32; }
+
+        /* রেজাল্ট বার (ফিক্সড বটম) */
+        .score-board {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 1.1em;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+        .score-board span { margin: 0 15px; }
+        .score-correct { color: #4caf50; }
+        .score-wrong { color: #ff5252; }
+    </style>
 </head>
 <body>
-<header>
-  <h1>জীববিজ্ঞান বহুনির্বাচনি — Interactive Quiz</h1>
-  <p>প্রশ্নে ক্লিক করলে অপশন ও সঠিক উত্তরের সবুজ বৃত্ত দেখা যাবে</p>
-</header>
 
-<div class="wrap">
-  <div class="info">
-    <div class="score">স্কোর: <span id="score">0</span> / <span id="total">0</span></div>
-    <div class="controls">
-      <button class="ctrl" onclick="openAll()">সব প্রশ্ন দেখাও</button>
-      <button class="ctrl secondary" onclick="closeAll()">সব বন্ধ করো</button>
-      <button class="ctrl secondary" onclick="resetQuiz()">রিসেট</button>
+<h2>ঢাকা বোর্ড ২০২৬ - জীববিজ্ঞান (MCQ)</h2>
+<p class="instruction">👇 যেকোনো একটি অপশনে ক্লিক করে উত্তর যাচাই করুন 👇</p>
+
+<!-- প্রশ্ন ১ -->
+<div class="quiz-card">
+    <div class="question">১. নিচের কোনটি C₃ উদ্ভিদ?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) আম</li>
+        <li onclick="checkAnswer(this, true)">⚪ (খ) গম</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) ভুট্টা</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) মুথাঘাস</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> গম একটি সাধারণ C₃ উদ্ভিদ; তবে ভুট্টা, ইক্ষু ও মুথাঘাস C₄ উদ্ভিদ।</div>
+</div>
+
+<!-- প্রশ্ন ২ -->
+<div class="quiz-card">
+    <div class="question">২. অবাত শ্বসন দেখা যায়—</div>
+    <div class="sub-q">i. ইস্ট-এ<br>ii. শৈবালে<br>iii. ব্যাকটেরিয়ায়<br><b>নিচের কোনটি সঠিক?</b></div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) i ও ii</li>
+        <li onclick="checkAnswer(this, true)">⚪ (খ) i ও iii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) ii ও iii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) i, ii ও iii</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> ইস্ট ও কিছু ব্যাকটেরিয়ায় অক্সিজেনের অনুপস্থিতিতে অবাত শ্বসন ঘটে।</div>
+</div>
+
+<!-- প্রশ্ন ৩ -->
+<div class="quiz-card">
+    <div class="question">৩. কোন ফুলে দ্বিগুণু পরাগদণ্ড থাকে?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) জবা</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) শিমুল</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) সূর্যমুখী</li>
+        <li onclick="checkAnswer(this, true)">⚪ (ঘ) মটর</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> মটর ফুল দ্বিগুচ্ছ বা Diadelphous পুংস্তবক বিশিষ্ট।</div>
+</div>
+
+<!-- প্রশ্ন ৪ -->
+<div class="quiz-card">
+    <div class="question">৪. নিষেকের ফলে চিত্রের 'A' অংশটি কিসে পরিণত হয়?</div>
+    <div class="diagram">
+       \   /
+      (  o  )
+     ( o   o )  <-- B (গৌণ নিউক্লিয়াস)
+      (  o  )
+       ( o )    <-- A (ডিম্বক / ডিম্বাণু)
+        \ /
     </div>
-    <small class="note">প্রথমে কোনো সবুজ বৃত্ত থাকবে না। প্রশ্নে ক্লিক করলে উত্তরগুলো খুলবে। সঠিক অপশনে ক্লিক করলে সবুজ, ভুল অপশনে ক্লিক করলে লাল হবে।</small>
-  </div>
-  <div id="quiz"></div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) ভ্রূণে</li>
+        <li onclick="checkAnswer(this, true)">⚪ (খ) বীজে</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) সস্যকলায়</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) জাইগোটে</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> নিষেকের পর ডিম্বক বীজে এবং গর্ভাশয় ফলে পরিণত হয়।</div>
+</div>
+
+<!-- প্রশ্ন ৫ -->
+<div class="quiz-card">
+    <div class="question">৫. চিত্রের 'B' অংশটি—</div>
+    <div class="sub-q">i. সস্যকলা সৃষ্টি করে<br>ii. 3n নিউক্লিয়াস সৃষ্টি করে<br>iii. বীজপত্র সৃষ্টি করে<br><b>নিচের কোনটি সঠিক?</b></div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, true)">⚪ (ক) i ও ii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) i ও iii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) ii ও iii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) i, ii ও iii</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> গৌণ নিউক্লিয়াস (2n) পুংগ্যামেটের সাথে মিলিত হয়ে ৩n সস্য নিউক্লিয়াস গঠন করে, যা থেকে সস্যকলা তৈরি হয়।</div>
+</div>
+
+<!-- প্রশ্ন ৬ -->
+<div class="quiz-card">
+    <div class="question">৬. কোনটি DNA তে অনুপস্থিত?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) এডেনিন</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) গুয়ানিন</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) সাইটোসিন</li>
+        <li onclick="checkAnswer(this, true)">⚪ (ঘ) ইউরাসিল</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> DNA-তে থায়ামিন থাকে, কিন্তু RNA-তে থায়ামিনের পরিবর্তে ইউরাসিল থাকে।</div>
+</div>
+
+<!-- প্রশ্ন ৭ -->
+<div class="quiz-card">
+    <div class="question">৭. আলফা থ্যালাসেমিয়া রোগ কোন দেশে বেশি দেখা যায়?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) মধ্যপ্রাচ্য</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) রাশিয়া</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) অস্ট্রেলিয়া</li>
+        <li onclick="checkAnswer(this, true)">⚪ (ঘ) দক্ষিণ-পূর্ব এশিয়া</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> আলফা থ্যালাসেমিয়া প্রধানত দক্ষিণ-পূর্ব এশিয়ায় এবং বিটা থ্যালাসেমিয়া মধ্যপ্রাচ্যে বেশি দেখা যায়।</div>
+</div>
+
+<!-- প্রশ্ন ৮ -->
+<div class="quiz-card">
+    <div class="question">৮. ১৫০ জন পুরুষের মধ্যে বর্ণান্ধ হওয়ার সম্ভাবনা কত জনের?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) ১০</li>
+        <li onclick="checkAnswer(this, true)">⚪ (খ) ১২</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) ৩০</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) ৩৫</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> পুরুষদের মধ্যে বর্ণান্ধতার হার প্রায় ৮%। তাই ১৫০ জনের ৮% = ১৫০ × ০.০৮ = ১২ জন।</div>
+</div>
+
+<!-- প্রশ্ন ৯ -->
+<div class="quiz-card">
+    <div class="question">৯. নিচের কোনটি শিকারজীবী খাদ্য শিকল?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) মানুষ ➔ মশা ➔ ম্যালেরিয়া</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) মৃতজীব ➔ ব্যাকটেরিয়া ➔ হিউমাস</li>
+        <li onclick="checkAnswer(this, true)">⚪ (গ) ঘাস ➔ ফড়িং ➔ সাপ</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) মৃতদেহ ➔ ছত্রাক ➔ কেঁচো</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> এখানে আকারে ছোট প্রাণী থেকে শুরু করে বড় শিকারী প্রাণীতে রূপান্তর ঘটেছে।</div>
+</div>
+
+<!-- প্রশ্ন ১০ -->
+<div class="quiz-card">
+    <div class="question">১০. পর-পরাগায়নের সুবিধা—</div>
+    <div class="sub-q">i. পরাগায়ন নিশ্চিত হয়<br>ii. বীজ অধিক জীবনী শক্তিসম্পন্ন হয়<br>iii. নতুন বৈচিত্র্যের সৃষ্টি হয়<br><b>নিচের কোনটি সঠিক?</b></div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) i ও ii</li>
+        <li onclick="checkAnswer(this, true)">⚪ (খ) ii ও iii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) i ও iii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) i, ii ও iii</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> পর-পরাগায়নে নতুন জিনগত বৈচিত্র্য সৃষ্টি হয় এবং বীজ অধিক জীবনীশক্তিসম্পন্ন হয়।</div>
+</div>
+
+<!-- প্রশ্ন ১১ -->
+<div class="quiz-card">
+    <div class="question">১১. কোন আলোক বর্ণালিতে সালোকসংশ্লেষণ হার বেশি হয়?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, true)">⚪ (ক) লাল</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) হলুদ</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) সবুজ</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) গোলাপি</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> লাল ও নীল আলোতে ক্লোরোফিল আলো সবচেয়ে বেশি শোষণ করে, যার মধ্যে লাল আলোতে সালোকসংশ্লেষণ সবচেয়ে বেশি।</div>
+</div>
+
+<!-- প্রশ্ন ১২ -->
+<div class="quiz-card">
+    <div class="question">১২. হেস্টোরিয়া দেখা যায় কোন উদ্ভিদে?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) পান</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) ছত্রাক</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) শৈবাল</li>
+        <li onclick="checkAnswer(this, true)">⚪ (ঘ) স্বর্ণলতা</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> স্বর্ণলতা পরজীবী উদ্ভিদ, যা হেস্টোরিয়া বা চোষক অঙ্গের মাধ্যমে পোষক উদ্ভিদ থেকে খাদ্য শোষণ করে।</div>
+</div>
+
+<!-- প্রশ্ন ১৩ -->
+<div class="quiz-card">
+    <div class="question">১৩. নিচের কোন শাখা ভৌত জীববিজ্ঞানের অন্তর্ভুক্ত?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) জিন প্রযুক্তি</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) প্রত্নতত্ত্ববিদ্যা</li>
+        <li onclick="checkAnswer(this, true)">⚪ (গ) ট্যাক্সোনোমি</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) বন্যপ্রাণীবিদ্যা</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> ট্যাক্সোনোমি বা শ্রেণীবিন্যাসবিদ্যা জীববিজ্ঞানের একটি মৌলিক ভৌত শাখা।</div>
+</div>
+
+<!-- প্রশ্ন ১৪ -->
+<div class="quiz-card">
+    <div class="question">১৪. কোনটি Penicillium এর কোষপ্রাচীর তৈরি করে?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) প্রোটিন</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) লিপিড</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) সুবেরিন</li>
+        <li onclick="checkAnswer(this, true)">⚪ (ঘ) কাইটিন</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> Penicillium একটি ছত্রাক, আর ছত্রাকের কোষপ্রাচীর কাইটিন দিয়ে গঠিত।</div>
+</div>
+
+<!-- প্রশ্ন ১৫ -->
+<div class="quiz-card">
+    <div class="question">১৫. বিজ্ঞানী ম্যান্ডেলের মটর গাছ নিয়ে পরীক্ষায় F₂ উদ্ভিদের ক্ষেত্রে নিচের কোনটি সঠিক?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) একভাগ লম্বা তিনভাগ খাটো</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) অর্ধেক খাটো অর্ধেক লম্বা</li>
+        <li onclick="checkAnswer(this, true)">⚪ (গ) তিনভাগ লম্বা একভাগ খাটো</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) সবগুলো লম্বা</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> ম্যান্ডেলের একসংকর ক্রসে F₂ জনুতে ফিনোটাইপিক অনুপাত হয় ৩:১।</div>
+</div>
+
+<!-- প্রশ্ন ১৬ -->
+<div class="quiz-card">
+    <div class="question">১৬. উদ্দীপকের চিত্রটি কোন রাজ্যের?</div>
+    <div class="diagram">~~(O)-(O)-(O)-(O)-(O)-(O)~~  <-- অ্যানাবেনা (Anabaena)</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, true)">⚪ (ক) Monera</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) Fungi</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) Protista</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) Plantae</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> অ্যানাবেনা একটি সায়ানোব্যাকটেরিয়া, যা প্রোক্যারিওটা বা Monera রাজ্যের অন্তর্ভুক্ত।</div>
+</div>
+
+<!-- প্রশ্ন ১৭ -->
+<div class="quiz-card">
+    <div class="question">১৭. চিত্রের জীবটির কোষে অনুপস্থিত—</div>
+    <div class="sub-q">i. মাইটোকন্ড্রিয়া<br>ii. এন্ডোপ্লাজমিক রেটিকুলাম<br>iii. রাইবোজোম<br><b>নিচের কোনটি সঠিক?</b></div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, true)">⚪ (ক) i ও ii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) i ও iii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) ii ও iii</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) i, ii ও iii</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> আদিকোষী জীবে মাইটোকন্ড্রিয়া ও এন্ডোপ্লাজমিক রেটিকুলাম থাকে না; তবে রাইবোজোম থাকে।</div>
+</div>
+
+<!-- প্রশ্ন ১৮ -->
+<div class="quiz-card">
+    <div class="question">১৮. কোনটি প্রোটিন সংশ্লেষে সাহায্য করে?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) লাইসোজোম</li>
+        <li onclick="checkAnswer(this, true)">⚪ (খ) রাইবোজোম</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) মাইটোকন্ড্রিয়া</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) সেন্ট্রিওল</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> রাইবোজোমকে কোষের প্রোটিন তৈরির কারখানা বলা হয়।</div>
+</div>
+
+<!-- প্রশ্ন ১৯ -->
+<div class="quiz-card">
+    <div class="question">১৯. সবাত শ্বসনে চার অণু গ্লুকোজ জারিত হয়ে কত ATP উৎপন্ন হয়?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) ৩৮ অণু</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) ৭৬ অণু</li>
+        <li onclick="checkAnswer(this, true)">⚪ (গ) ১৫২ অণু</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) ১৬২ অণু</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> ১ অণু গ্লুকোজ জারিত হয়ে ৩৮টি ATP তৈরি করে, তাই ৪ অণু গ্লুকোজ থেকে ৪ × ৩৮ = ১৫২টি ATP তৈরি হবে।</div>
+</div>
+
+<!-- প্রশ্ন ২০ -->
+<div class="quiz-card">
+    <div class="question">২০. ল্যারিংস কোন তন্ত্রের অংশ?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) পরিপাক</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) স্নায়ু</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) রেচন</li>
+        <li onclick="checkAnswer(this, true)">⚪ (ঘ) শ্বসন</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> ল্যারিংস বা স্বরযন্ত্র শ্বাসনালীর উপরিভাগে অবস্থিত শ্বসনতন্ত্রের একটি অংশ।</div>
+</div>
+
+<!-- প্রশ্ন ২১ -->
+<div class="quiz-card">
+    <div class="question">২১. মানুষের ত্বকে কোন ধরনের আবরনী টিস্যু দেখা যায়?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) স্কোয়ামাস</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) কিউবয়েডাল</li>
+        <li onclick="checkAnswer(this, true)">⚪ (গ) স্ট্র্যাটিফাইড</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) সিউডো-স্ট্র্যাটিফাইড</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> মানুষের ত্বক বহুস্তরবিশিষ্ট বা স্ট্র্যাটিফাইড স্কোয়ামাস এপিথেলিয়াল টিস্যু দিয়ে তৈরি।</div>
+</div>
+
+<!-- প্রশ্ন ২২ -->
+<div class="quiz-card">
+    <div class="question">২২. অ্যাক্রোসেন্ট্রিক ক্রোমোজোমের আকৃতি কেমন?</div>
+    <div class="diagram">  |
+  O== (সেন্ট্রোমিয়ার প্রান্তের কাছাকাছি)
+  |</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) I</li>
+        <li onclick="checkAnswer(this, true)">⚪ (খ) J</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) L</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) V</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> সেন্ট্রোমিয়ারটি প্রান্তের কাছাকাছি থাকায় অ্যানাফেজ ধাপে ক্রোমোজোমকে ইংরেজি 'J' অক্ষরের মতো দেখায়।</div>
+</div>
+
+<!-- প্রশ্ন ২৩ -->
+<div class="quiz-card">
+    <div class="question">২৩. অনিয়ন্ত্রিত কোষ বিভাজনের ফল কোনটি?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, true)">⚪ (ক) অর্বুদ</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) আলসার</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) যক্ষ্মা</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) নিউমোনিয়া</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> অনিয়ন্ত্রিত মিটোসিস কোষ বিভাজনের ফলে টিউমার বা অর্বুদ (Tumor) সৃষ্টি হয়।</div>
+</div>
+
+<!-- প্রশ্ন ২৪ -->
+<div class="quiz-card">
+    <div class="question">২৪. ফুসফুসের একটি অংশের কোষগুলোর অস্বাভাবিক বৃদ্ধির জন্য কোন ভাইরাস দায়ী?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) HIV</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) Covid-19</li>
+        <li onclick="checkAnswer(this, false)">⚪ (গ) Hepatitis-B</li>
+        <li onclick="checkAnswer(this, true)">⚪ (ঘ) Papilloma</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> হিউম্যান প্যাপিলোমা ভাইরাস (HPV) অনিয়ন্ত্রিত কোষ বৃদ্ধি ও ক্যানসারের জন্য দায়ী।</div>
+</div>
+
+<!-- প্রশ্ন ২৫ -->
+<div class="quiz-card">
+    <div class="question">২৫. সালোকসংশ্লেষণের জন্য উপযুক্ত তাপমাত্রা কোনটি?</div>
+    <ul class="options">
+        <li onclick="checkAnswer(this, false)">⚪ (ক) ১২° সে.–২৫° সে.</li>
+        <li onclick="checkAnswer(this, false)">⚪ (খ) ১৭° সে.–৩০° সে.</li>
+        <li onclick="checkAnswer(this, true)">⚪ (গ) ২২° সে.–৩৫° সে.</li>
+        <li onclick="checkAnswer(this, false)">⚪ (ঘ) ২০° সে.–৪০° সে.</li>
+    </ul>
+    <div class="explanation">💡 <b>ব্যাখ্যা:</b> সালোকসংশ্লেষণ প্রক্রিয়ার পরিমিত বা অনুকূল তাপমাত্রা হলো ২২° সেলসিয়াস থেকে ৩৫° সেলসিয়াস।</div>
+</div>
+
+<!-- স্কোরবোর্ড -->
+<div class="score-board">
+    উত্তর দিয়েছেন: <span id="total-answered">০</span>/২৫ | 
+    সঠিক: <span id="correct-count" class="score-correct">০</span> | 
+    ভুল: <span id="wrong-count" class="score-wrong">০</span>
 </div>
 
 <script>
-const questions = [
- {q:"নিচের কোনটি C₃ উদ্ভিদ?",o:["আখ","ধান","ভুট্টা","আনারস"],a:1},
- {q:"অবাত শ্বসন সাধারণত কোন জীবের মধ্যে দেখা যায়?",o:["ইস্ট","শৈবাল","মানুষ","সবুজ উদ্ভিদ"],a:0},
- {q:"পর-পরাগায়নের একটি সুবিধা কোনটি?",o:["পরাগায়ন নিশ্চিত হয়","বীজের জীবনীশক্তি কমে","নতুন বৈচিত্র্যের সৃষ্টি হয় না","নিষেক বন্ধ হয়ে যায়"],a:2},
- {q:"প্রোটিন সংশ্লেষণে কোন অঙ্গাণু সাহায্য করে?",o:["লাইসোজোম","রাইবোজোম","গলজি বডি","ভ্যাকুওল"],a:1},
- {q:"ল্যারিংস কোন তন্ত্রের অংশ?",o:["পরিপাকতন্ত্র","রেচনতন্ত্র","শ্বাসতন্ত্র","সংবহনতন্ত্র"],a:2},
- {q:"মানুষের ত্বকে কোন ধরনের আবরণী টিস্যু দেখা যায়?",o:["স্কোয়ামাস","কিউবয়ডাল","কলামনার","সিউডো-স্ট্রাটিফাইড"],a:0},
- {q:"আবৃতবীজী উদ্ভিদের দ্বিনিষেকের ফলে কোনটি গঠিত হয়?",o:["শুধু জাইগোট","শুধু এন্ডোস্পার্ম","জাইগোট ও এন্ডোস্পার্ম","শুধু ভ্রূণ"],a:2},
- {q:"নিচের কোনটি প্রোটিন সংশ্লেষণের সঙ্গে সরাসরি সম্পর্কিত?",o:["রাইবোজোম","লাইসোজোম","গলজি বডি","সেন্ট্রোসোম"],a:0},
- {q:"সালোকসংশ্লেষণের জন্য উপযুক্ত তাপমাত্রা কোনটি?",o:["12°–25°C","17°–30°C","22°–35°C","30°–40°C"],a:2},
- {q:"কোন আলোক বর্ণালিতে সালোকসংশ্লেষণ বেশি কার্যকর?",o:["লাল","সবুজ","হলুদ","গোলাপি"],a:0},
- {q:"জীবজগতের শ্রেণিবিন্যাসে ব্যাকটেরিয়া কোন রাজ্যের অন্তর্ভুক্ত?",o:["Protista","Monera","Fungi","Plantae"],a:1},
- {q:"মাইটোকন্ড্রিয়াকে কোষের কী বলা হয়?",o:["নিয়ন্ত্রণকেন্দ্র","শক্তিঘর","পরিবহনকেন্দ্র","সঞ্চয়কেন্দ্র"],a:1}
-];
+    let correctCount = 0;
+    let wrongCount = 0;
 
-let score=0, answered=Array(questions.length).fill(false);
-const letters=["ক","খ","গ","ঘ"];
-const quiz=document.getElementById("quiz");
-document.getElementById("total").textContent=questions.length;
+    function checkAnswer(selectedOption, isCorrect) {
+        let parentUl = selectedOption.parentElement;
+        let allOptions = parentUl.querySelectorAll('li');
+        let card = parentUl.parentElement;
+        let explanation = card.querySelector('.explanation');
 
-function render(){
- quiz.innerHTML="";
- questions.forEach((item,i)=>{
-  const card=document.createElement("div"); card.className="qcard"; card.id="q"+i;
-  card.innerHTML=`<div class="qhead" onclick="toggle(${i})">
-    <div class="num">${i+1}</div><div class="qtext">${item.q}</div>
-    <div class="status">${answered[i]?"উত্তর দেওয়া হয়েছে":"ক্লিক করুন"}</div>
-    <div class="answer-dot" title="সঠিক উত্তর"></div>
-  </div>
-  <div class="options">
-    ${item.o.map((x,j)=>`<button class="option" id="q${i}o${j}" onclick="choose(event,${i},${j})">
-      <span class="bubble">${letters[j]}</span><span>${x}</span>
-    </button>`).join("")}
-    <div class="feedback" id="f${i}"></div>
-  </div>`;
-  quiz.appendChild(card);
- });
-}
-function toggle(i){document.getElementById("q"+i).classList.toggle("open")}
-function choose(e,i,j){
- e.stopPropagation();
- const card=document.getElementById("q"+i);
+        // অপশনগুলো ডিজেবল করে দেওয়া
+        allOptions.forEach(option => option.classList.add('disabled'));
+
+        if (isCorrect) {
+            selectedOption.classList.add('correct-selected');
+            selectedOption.innerHTML = selectedOption.innerHTML.replace('⚪', '🟢');
+            correctCount++;
+        } else {
+            selectedOption.classList.add('wrong-selected');
+            selectedOption.innerHTML = selectedOption.innerHTML.replace('⚪', '🔴');
+            wrongCount++;
+
+            // ভুল উত্তর দিলে সঠিকটি হাইলাইট করা
+            allOptions.forEach(option => {
+                if (option.getAttribute('onclick').includes('true')) {
+                    option.classList.add('show-correct');
+                    option.innerHTML = option.innerHTML.replace('⚪', '🟢');
+                }
+            });
+        }
+
+        // স্কোর আপডেট
+        document.getElementById('correct-count').innerText = correctCount;
+        document.getElementById('wrong-count').innerText = wrongCount;
+        document.getElementById('total-answered').innerText = correctCount + wrongCount;
+
+        // ব্যাখ্যা প্রদর্শন
+        explanation.style.display = 'block';
+    }
+</script>
+
+</body>
+</html> const card=document.getElementById("q"+i);
  card.classList.add("open");
  const feedback=document.getElementById("f"+i);
  const correct=questions[i].a;
