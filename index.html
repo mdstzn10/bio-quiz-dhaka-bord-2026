@@ -410,31 +410,11 @@
     }
 </script>
 
-</body>
-</html> const card=document.getElementById("q"+i);
- card.classList.add("open");
- const feedback=document.getElementById("f"+i);
- const correct=questions[i].a;
- if(j===correct){
-   if(!answered[i]){score++;answered[i]=true}
-   document.querySelectorAll(`#q${i} .option`).forEach((b,k)=>b.classList.toggle("correct",k===correct));
-   feedback.className="feedback show ok"; feedback.textContent="✓ সঠিক উত্তর!";
-   card.querySelector(".status").textContent="সঠিক";
-   card.querySelector(".answer-dot").style.background="#16a34a";
-   card.querySelector(".answer-dot").style.borderColor="#16a34a";
- }else{
-   document.getElementById(`q${i}o${j}`).classList.add("wrong");
-   feedback.className="feedback show no"; feedback.textContent="✗ ভুল উত্তর — আবার চেষ্টা করো।";
- }
- document.getElementById("score").textContent=score;
-}
-function openAll(){document.querySelectorAll(".qcard").forEach(x=>x.classList.add("open"))}
-function closeAll(){document.querySelectorAll(".qcard").forEach(x=>x.classList.remove("open"))}
-function resetQuiz(){
- score=0;answered=Array(questions.length).fill(false);
- document.getElementById("score").textContent=0;render();
-}
-render();
 </script>
+
+<div class="developer">
+    DEVELOPMENT BY <b>SEFAT</b>
+</div>
+
 </body>
-</html>
+       </html>
