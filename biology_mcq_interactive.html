@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>জীববিজ্ঞান MCQ — Interactive Quiz</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans Bengali","Nirmala UI",sans-serif;background:#f4f7fb;color:#172033}
+header{background:linear-gradient(135deg,#0f766e,#16a34a);color:#fff;padding:22px 16px;text-align:center;position:sticky;top:0;z-index:5;box-shadow:0 4px 18px #0002}
+header h1{margin:0;font-size:24px} header p{margin:7px 0 0;opacity:.92}
+.wrap{max-width:900px;margin:20px auto;padding:0 14px}
+.info{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px;box-shadow:0 3px 14px #00000012}
+.qcard{background:#fff;border-radius:16px;margin:14px 0;overflow:hidden;box-shadow:0 3px 14px #00000012;border:1px solid #e7edf3}
+.qhead{display:flex;gap:12px;align-items:center;padding:16px;cursor:pointer;user-select:none}
+.num{min-width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#eef2f7;font-weight:800}
+.qtext{font-weight:700;line-height:1.55;flex:1}
+.status{font-size:13px;color:#64748b}
+.answer-dot{width:24px;height:24px;border-radius:50%;border:3px solid #cbd5e1;background:#fff;display:none}
+.qcard.open .answer-dot{display:block}
+.options{display:none;padding:0 16px 16px}
+.qcard.open .options{display:block}
+.option{display:flex;align-items:center;gap:10px;width:100%;padding:12px 13px;margin:8px 0;border:2px solid #e2e8f0;border-radius:12px;background:#fff;text-align:left;font:inherit;cursor:pointer;transition:.18s}
+.option:hover{transform:translateY(-1px);border-color:#94a3b8}
+.bubble{width:30px;height:30px;border-radius:50%;border:2px solid #94a3b8;display:grid;place-items:center;font-weight:800;flex:none}
+.option.correct{background:#dcfce7;border-color:#16a34a;color:#166534}
+.option.correct .bubble{background:#16a34a;color:#fff;border-color:#16a34a}
+.option.wrong{background:#fee2e2;border-color:#dc2626;color:#991b1b}
+.option.wrong .bubble{background:#dc2626;color:#fff;border-color:#dc2626}
+.feedback{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;font-weight:700}
+.feedback.show{display:block}
+.feedback.ok{background:#dcfce7;color:#166534}.feedback.no{background:#fee2e2;color:#991b1b}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+button.ctrl{border:0;border-radius:10px;padding:10px 15px;background:#0f766e;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+button.ctrl.secondary{background:#334155}
+.score{font-weight:800}
+small.note{color:#64748b}
+</style>
+</head>
+<body>
+<header>
+  <h1>জীববিজ্ঞান বহুনির্বাচনি — Interactive Quiz</h1>
+  <p>প্রশ্নে ক্লিক করলে অপশন ও সঠিক উত্তরের সবুজ বৃত্ত দেখা যাবে</p>
+</header>
+
+<div class="wrap">
+  <div class="info">
+    <div class="score">স্কোর: <span id="score">0</span> / <span id="total">0</span></div>
+    <div class="controls">
+      <button class="ctrl" onclick="openAll()">সব প্রশ্ন দেখাও</button>
+      <button class="ctrl secondary" onclick="closeAll()">সব বন্ধ করো</button>
+      <button class="ctrl secondary" onclick="resetQuiz()">রিসেট</button>
+    </div>
+    <small class="note">প্রথমে কোনো সবুজ বৃত্ত থাকবে না। প্রশ্নে ক্লিক করলে উত্তরগুলো খুলবে। সঠিক অপশনে ক্লিক করলে সবুজ, ভুল অপশনে ক্লিক করলে লাল হবে।</small>
+  </div>
+  <div id="quiz"></div>
+</div>
+
+<script>
+const questions = [
+ {q:"নিচের কোনটি C₃ উদ্ভিদ?",o:["আখ","ধান","ভুট্টা","আনারস"],a:1},
+ {q:"অবাত শ্বসন সাধারণত কোন জীবের মধ্যে দেখা যায়?",o:["ইস্ট","শৈবাল","মানুষ","সবুজ উদ্ভিদ"],a:0},
+ {q:"পর-পরাগায়নের একটি সুবিধা কোনটি?",o:["পরাগায়ন নিশ্চিত হয়","বীজের জীবনীশক্তি কমে","নতুন বৈচিত্র্যের সৃষ্টি হয় না","নিষেক বন্ধ হয়ে যায়"],a:2},
+ {q:"প্রোটিন সংশ্লেষণে কোন অঙ্গাণু সাহায্য করে?",o:["লাইসোজোম","রাইবোজোম","গলজি বডি","ভ্যাকুওল"],a:1},
+ {q:"ল্যারিংস কোন তন্ত্রের অংশ?",o:["পরিপাকতন্ত্র","রেচনতন্ত্র","শ্বাসতন্ত্র","সংবহনতন্ত্র"],a:2},
+ {q:"মানুষের ত্বকে কোন ধরনের আবরণী টিস্যু দেখা যায়?",o:["স্কোয়ামাস","কিউবয়ডাল","কলামনার","সিউডো-স্ট্রাটিফাইড"],a:0},
+ {q:"আবৃতবীজী উদ্ভিদের দ্বিনিষেকের ফলে কোনটি গঠিত হয়?",o:["শুধু জাইগোট","শুধু এন্ডোস্পার্ম","জাইগোট ও এন্ডোস্পার্ম","শুধু ভ্রূণ"],a:2},
+ {q:"নিচের কোনটি প্রোটিন সংশ্লেষণের সঙ্গে সরাসরি সম্পর্কিত?",o:["রাইবোজোম","লাইসোজোম","গলজি বডি","সেন্ট্রোসোম"],a:0},
+ {q:"সালোকসংশ্লেষণের জন্য উপযুক্ত তাপমাত্রা কোনটি?",o:["12°–25°C","17°–30°C","22°–35°C","30°–40°C"],a:2},
+ {q:"কোন আলোক বর্ণালিতে সালোকসংশ্লেষণ বেশি কার্যকর?",o:["লাল","সবুজ","হলুদ","গোলাপি"],a:0},
+ {q:"জীবজগতের শ্রেণিবিন্যাসে ব্যাকটেরিয়া কোন রাজ্যের অন্তর্ভুক্ত?",o:["Protista","Monera","Fungi","Plantae"],a:1},
+ {q:"মাইটোকন্ড্রিয়াকে কোষের কী বলা হয়?",o:["নিয়ন্ত্রণকেন্দ্র","শক্তিঘর","পরিবহনকেন্দ্র","সঞ্চয়কেন্দ্র"],a:1}
+];
+
+let score=0, answered=Array(questions.length).fill(false);
+const letters=["ক","খ","গ","ঘ"];
+const quiz=document.getElementById("quiz");
+document.getElementById("total").textContent=questions.length;
+
+function render(){
+ quiz.innerHTML="";
+ questions.forEach((item,i)=>{
+  const card=document.createElement("div"); card.className="qcard"; card.id="q"+i;
+  card.innerHTML=`<div class="qhead" onclick="toggle(${i})">
+    <div class="num">${i+1}</div><div class="qtext">${item.q}</div>
+    <div class="status">${answered[i]?"উত্তর দেওয়া হয়েছে":"ক্লিক করুন"}</div>
+    <div class="answer-dot" title="সঠিক উত্তর"></div>
+  </div>
+  <div class="options">
+    ${item.o.map((x,j)=>`<button class="option" id="q${i}o${j}" onclick="choose(event,${i},${j})">
+      <span class="bubble">${letters[j]}</span><span>${x}</span>
+    </button>`).join("")}
+    <div class="feedback" id="f${i}"></div>
+  </div>`;
+  quiz.appendChild(card);
+ });
+}
+function toggle(i){document.getElementById("q"+i).classList.toggle("open")}
+function choose(e,i,j){
+ e.stopPropagation();
+ const card=document.getElementById("q"+i);
+ card.classList.add("open");
+ const feedback=document.getElementById("f"+i);
+ const correct=questions[i].a;
+ if(j===correct){
+   if(!answered[i]){score++;answered[i]=true}
+   document.querySelectorAll(`#q${i} .option`).forEach((b,k)=>b.classList.toggle("correct",k===correct));
+   feedback.className="feedback show ok"; feedback.textContent="✓ সঠিক উত্তর!";
+   card.querySelector(".status").textContent="সঠিক";
+   card.querySelector(".answer-dot").style.background="#16a34a";
+   card.querySelector(".answer-dot").style.borderColor="#16a34a";
+ }else{
+   document.getElementById(`q${i}o${j}`).classList.add("wrong");
+   feedback.className="feedback show no"; feedback.textContent="✗ ভুল উত্তর — আবার চেষ্টা করো।";
+ }
+ document.getElementById("score").textContent=score;
+}
+function openAll(){document.querySelectorAll(".qcard").forEach(x=>x.classList.add("open"))}
+function closeAll(){document.querySelectorAll(".qcard").forEach(x=>x.classList.remove("open"))}
+function resetQuiz(){
+ score=0;answered=Array(questions.length).fill(false);
+ document.getElementById("score").textContent=0;render();
+}
+render();
+</script>
+</body>
+</html>
