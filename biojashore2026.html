@@ -722,7 +722,7 @@
     let quizFinished = false;
     
     // ১০ মিনিট = ৬০০ সেকেন্ড
-    let timeRemaining = 600; 
+    let timeRemaining = 300; 
     let timerInterval = null;
 
     function startQuiz() {
@@ -740,7 +740,7 @@
         let seconds = timeRemaining % 60;
 
         let formattedMinutes = minutes < 5 ? '০' + convertToBanglaNumber(minutes) : convertToBanglaNumber(minutes);
-        let formattedSeconds = seconds < 10 ? '০' + convertToBanglaNumber(seconds) : convertToBanglaNumber(seconds);
+        let formattedSeconds = seconds < 60 ? '০' + convertToBanglaNumber(seconds) : convertToBanglaNumber(seconds);
 
         document.getElementById('timer-display').innerText = `${formattedMinutes}:${formattedSeconds}`;
 
@@ -752,7 +752,7 @@
     }
 
     function convertToBanglaNumber(n) {
-        const bnDigits = ['০', '১', '২', '৩', '৪', '৫',];
+        const bnDigits = [];
         return n.toString().split('').map(x => bnDigits[x] || x).join('');
     }
 
