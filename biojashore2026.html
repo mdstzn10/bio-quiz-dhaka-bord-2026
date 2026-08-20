@@ -359,12 +359,12 @@
         DEVELOPED BY: SEFAT
     </div>
     <div class="score-board">
-        উত্তর দিয়েছেন: <span id="total-answered">0</span>/২৫ | 
+        উত্তর দিয়েছেন: <span id="total-answered">০</span>/২৫ | 
         সঠিক: <span id="correct-count" class="score-correct">0</span> | 
         ভুল: <span id="wrong-count" class="score-wrong">0</span>
     </div>
     <div class="timer-box">
-        ⏳ অবশিষ্ট সময়: <span id="timer-display">10:00</span>
+        ⏳ অবশিষ্ট সময়: <span id="timer-display">5:00</span>
     </div>
 </div>
 
@@ -739,7 +739,7 @@
         let minutes = Math.floor(timeRemaining / 60);
         let seconds = timeRemaining % 60;
 
-        let formattedMinutes = minutes < 10 ? '০' + convertToBanglaNumber(minutes) : convertToBanglaNumber(minutes);
+        let formattedMinutes = minutes < 5 ? '০' + convertToBanglaNumber(minutes) : convertToBanglaNumber(minutes);
         let formattedSeconds = seconds < 10 ? '০' + convertToBanglaNumber(seconds) : convertToBanglaNumber(seconds);
 
         document.getElementById('timer-display').innerText = `${formattedMinutes}:${formattedSeconds}`;
@@ -752,7 +752,7 @@
     }
 
     function convertToBanglaNumber(n) {
-        const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        const bnDigits = ['০', '১', '২', '৩', '৪', '৫',];
         return n.toString().split('').map(x => bnDigits[x] || x).join('');
     }
 
