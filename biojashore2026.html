@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>এসএসসি জীববিজ্ঞান - যশোর বোর্ড ২০২৬ কুইজ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            max-width: 850px; 
+            margin: auto; 
+            padding-top: 110px; 
+            color: #333;
+        }
+
+        /* স্থায়ী টপ বার */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            border-bottom: 2px solid #00f2fe;
+            z-index: 9999;
+        }
+
+        .author-tag {
+            font-size: 1.15em;
+            font-weight: 900;
+            letter-spacing: 2px;
+            display: inline-block;
+            margin-bottom: 4px;
+            animation: glowPulse 1.5s infinite alternate;
+        }
+
+        @keyframes glowPulse {
+            0% {
+                color: #00f2fe;
+                text-shadow: 0 0 5px #00f2fe, 0 0 10px #00f2fe, 0 0 20px #00f2fe;
+                opacity: 0.8;
+            }
+            100% {
+                color: #ff007f;
+                text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 35px #ff007f;
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        .score-board {
+            font-size: 1.05em;
+            font-weight: bold;
+        }
+
+        .timer-box {
+            color: #fbbf24;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 4px;
+        }
+
+        .score-correct { color: #4ade80; }
+        .score-wrong { color: #f87171; }
+
+        .header-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        h2 { 
+            color: #ffffff; 
+            margin: 0;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .sub-header { 
+            color: #00f2fe; 
+            font-weight: bold; 
+            font-size: 1.2em;
+            margin-top: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .instruction { 
+            color: #e0e0e0; 
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* স্টার্ট মডাল/ওভারলে */
+        #start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .start-card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid #00f2fe;
+        }
+
+        .start-card h3 {
+            margin-top: 0;
+            color: #1e3c72;
+            font-size: 1.6em;
+        }
+
+        .start-card p {
+            color: #4a5568;
+            font-size: 1em;
+            margin: 15px 0 25px 0;
+        }
+
+        .quiz-container-blur {
+            filter: blur(5px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .quiz-card { 
+            background: #ffffff; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
+            border-left: 6px solid #4e54c8;
+        }
+
+        .question { 
+            font-weight: bold; 
+            font-size: 1.1em; 
+            color: #2c3e50; 
+        }
+
+        .sub-q { 
+            font-weight: normal; 
+            margin-top: 8px; 
+            color: #4a5568; 
+            background: #f7fafc;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #cbd5e0;
+        }
+
+        .diagram-img { 
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 15px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 2px solid #00f2fe;
+        }
+
+        .options { list-style: none; padding: 0; margin-top: 12px; }
+        
+        .options li { 
+            margin: 8px 0; 
+            padding: 12px 15px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            background-color: #f8fafc; 
+            border: 2px solid #e2e8f0; 
+            font-weight: 500;
+        }
+
+        .options li:hover { 
+            background: linear-gradient(90deg, #e0c3fc 0%, #8ec5fc 100%);
+            border-color: #a855f7;
+            color: #1e1b4b;
+        }
+        
+        .options li.correct-selected { 
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%) !important; 
+            border-color: #10b981 !important; 
+            color: #ffffff !important; 
+            font-weight: bold; 
+        }
+
+        .options li.wrong-selected { 
+            background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%) !important; 
+            border-color: #ef4444 !important; 
+            color: #ffffff !important; 
+            font-weight: bold; 
+        }
+
+        .options li.show-correct { 
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%) !important; 
+            border-color: #10b981 !important; 
+            color: #ffffff !important; 
+            font-weight: bold; 
+        }
+
+        .options li.disabled { pointer-events: none; }
+        
+        .explanation { 
+            display: none; 
+            margin-top: 12px; 
+            padding: 12px; 
+            background: #ecfdf5; 
+            border-radius: 8px;
+            border-left: 5px solid #10b981; 
+            font-size: 0.95em; 
+            color: #065f46; 
+        }
+
+        /* রেজাল্ট কার্ড */
+        #result-card {
+            display: none;
+            background: #0f172a; 
+            padding: 35px 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            margin-top: 30px;
+            border: 2px solid #00f2fe;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        #result-card h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff007f, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .rating-stars {
+            font-size: 3em; 
+            margin: 15px 0;
+            color: #fbbf24; 
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+            letter-spacing: 5px;
+        }
+
+        .score-summary {
+            font-size: 1.35em;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .score-summary b {
+            color: #38ef7d;
+            font-size: 1.2em;
+        }
+
+        .feedback-text {
+            font-size: 1.15em;
+            font-weight: bold;
+            color: #38bdf8;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 1.05em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #00f2fe, #4e54c8);
+            color: white;
+            font-size: 1.2em;
+            width: 100%;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
+        }
+
+        .btn-retry {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(56, 239, 125, 0.5);
+        }
+
+        .btn-exit {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        .btn-exit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 75, 43, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- কুইজ শুরুর ওভারলে -->
+<div id="start-overlay">
+    <div class="start-card">
+        <h3>পরীক্ষায় আপনাকে স্বাগতম!</h3>
+        <p>মোট প্রশ্ন: ২৫টি<br>সময়: ১০:০০ মিনিট</p>
+        <button class="btn btn-start" onclick="startQuiz()">🚀 কুইজ শুরু করুন</button>
+    </div>
+</div>
+
+<div class="top-bar">
+    <div class="author-tag">
+        DEVELOPED BY: SEFAT
+    </div>
+    <div class="score-board">
+        উত্তর দিয়েছেন: <span id="total-answered">০</span>/২৫ | 
+        সঠিক: <span id="correct-count" class="score-correct">০</span> | 
+        ভুল: <span id="wrong-count" class="score-wrong">০</span>
+    </div>
+    <div class="timer-box">
+        ⏳ অবশিষ্ট সময়: <span id="timer-display">১০:০০</span>
+    </div>
+</div>
+
+<div id="quiz-wrapper" class="quiz-container-blur">
+    <div class="header-box">
+        <h2>জীববিজ্ঞান বহু নির্বাচনী অভীক্ষা</h2>
+        <div class="sub-header">যশোর বোর্ড ২০২৬</div>
+        <div class="instruction">👇 সঠিক উত্তর নির্বাচন করতে অপশনে ক্লিক করুন 👇</div>
+    </div>
+
+    <!-- প্রশ্ন ১ -->
+    <div class="quiz-card">
+        <div class="question">১. কোনটি অবৃন্তক ফুল?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) ধুতুরা</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) হাতীশুঁড়</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) কুমড়া</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) জবা</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> হাতীশুঁড় ফুলে কোনো বোঁটা বা বৃত্ত থাকে না, তাই এটি অবৃন্তক ফুল।</div>
+    </div>
+
+    <!-- প্রশ্ন ২ -->
+    <div class="quiz-card">
+        <div class="question">২. কোনটি ডিপ্লয়েড কোষ?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, true)">⚪ (ক) পরাগ মাতৃকোষ</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) পুং গ্যামেট</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) পরাগরেণু</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) ডিম্বাণু</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> পরাগ মাতৃকোষের ক্রোমোজোম সংখ্যা 2n (ডিপ্লয়েড)।</div>
+    </div>
+
+    <!-- প্রশ্ন ৩ -->
+    <div class="quiz-card">
+        <div class="question">৩. কোনটি L আকৃতির ক্রোমোজোম?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) মেটাসেন্ট্রিক</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) সাবমেটাসেন্ট্রিক</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) অ্যাক্রোসেন্ট্রিক</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) টেলোসেন্ট্রিক</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> সাবমেটাসেন্ট্রিক ক্রোমোজোমে সেন্ট্রোমিয়ারটি কিছুটা পাশে থাকায় এটি 'L' আকৃতি ধারণ করে।</div>
+    </div>
+
+    <!-- উদ্দীপক (৪ ও ৫) -->
+    <div class="quiz-card">
+        <div class="question">নিচের চিত্রের আলোকে ৪ ও ৫ নং প্রশ্নের উত্তর দাও:</div>
+        <img src="dna_rna_diagram.png" alt="P (DNA) ও Q (RNA) চিত্র" class="diagram-img">
+    </div>
+
+    <!-- প্রশ্ন ৪ -->
+    <div class="quiz-card">
+        <div class="question">৪. উদ্দীপকে P এর ব্যাস কত?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) 34 Å</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) 20 Å</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) 3.5 Å</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) 3.4 Å</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> DNA (P) ডাবল হেলিক্সের ব্যাস সবসময় 20 Å হয়ে থাকে।</div>
+    </div>
+
+    <!-- প্রশ্ন ৫ -->
+    <div class="quiz-card">
+        <div class="question">৫. P ও Q এর মধ্যে সাদৃশ্য হলো—</div>
+        <div class="sub-q">i. অ্যাডেনিন ও গুয়ানিন উপস্থিতি<br>ii. পেন্টোজ সুগার বিদ্যমান<br>iii. TMV তে উভয়টিই উপস্থিত<br><b>নিচের কোনটি সঠিক?</b></div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, true)">⚪ (ক) i ও ii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) i ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) ii ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) i, ii ও iii</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> DNA (P) এবং RNA (Q) উভয়েই অ্যাডেনিন, গুয়ানিন ও পেন্টোজ সুগার থাকে।</div>
+    </div>
+
+    <!-- প্রশ্ন ৬ -->
+    <div class="quiz-card">
+        <div class="question">৬. আর্কিওপ্টেরিক্স এর বৈশিষ্ট্যের সাথে মিল সম্পন্ন প্রাণী—</div>
+        <div class="sub-q">i. বাদুড়<br>ii. দোয়েল<br>iii. গিরগিটি<br><b>নিচের কোনটি সঠিক?</b></div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) i ও ii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) i ও iii</li>
+            <li onclick="checkAnswer(this, true)">⚪ (গ) ii ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) i, ii ও iii</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> আর্কিওপ্টেরিক্স পাখি (দোয়েল) এবং সরীসৃপ (গিরগিটি) উভয় প্রাণীর বৈশিষ্ট্য বহন করে।</div>
+    </div>
+
+    <!-- প্রশ্ন ৭ -->
+    <div class="quiz-card">
+        <div class="question">৭. রাফলেসিয়াযুক্ত একটি লতানো উদ্ভিদ অন্য গাছের উপরে বেড়ে উঠলো। উদ্ভিদ দুটির আন্তঃক্রিয়াকে কী বলে?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) অ্যান্টিবায়োসিস</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) মিউচুয়ালিজম</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) প্রতিযোগিতা</li>
+            <li onclick="checkAnswer(this, true)">⚪ (ঘ) শোষন</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> একটি পোষক উদ্ভিদ থেকে পুষ্টি শোষণ করে বেঁচে থাকাই হলো শোষণ বা পরজীবিতা।</div>
+    </div>
+
+    <!-- উদ্দীপক (৮ ও ৯) -->
+    <div class="quiz-card">
+        <div class="question">নিচের উদ্দীপকের আলোকে ৮ ও ৯ নং প্রশ্নের উত্তর দাও:</div>
+        <img src="food_web_diagram.png" alt="খাদ্যজালের চিত্র" class="diagram-img">
+    </div>
+
+    <!-- প্রশ্ন ৮ -->
+    <div class="quiz-card">
+        <div class="question">৮. উদ্দীপকের খাদ্যজালে কয়টি খাদ্যশিকল রয়েছে?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) ২টি</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) ৫টি</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) ৪টি</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) ৩টি</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> চিত্রটি পর্যবেক্ষণ করলে দেখা যায় এখানে মোট ৫টি ভিন্ন খাদ্যশিকল সংযুক্ত রয়েছে।</div>
+    </div>
+
+    <!-- প্রশ্ন ৯ -->
+    <div class="quiz-card">
+        <div class="question">৯. উদ্দীপকের সবুজ উদ্ভিদের উৎপন্ন শক্তি—</div>
+        <div class="sub-q">i. বাঘের চেয়ে ময়ূর বেশি পাবে<br>ii. সাপের চেয়ে ব্যাং বেশি পাবে<br>iii. বাঘের চেয়ে হরিণ বেশি পাবে<br><b>নিচের কোনটি সঠিক?</b></div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) i, ii ও iii</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) ii ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) i ও ii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) i ও iii</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> ট্রফিক লেভেল অনুযায়ী নিম্ন স্তরের খাদকরা উচ্চ স্তরের খাদকের চেয়ে বেশি শক্তি পায়।</div>
+    </div>
+
+    <!-- প্রশ্ন ১০ -->
+    <div class="quiz-card">
+        <div class="question">১০. কোনটি প্রথম স্তরের খাদক?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, true)">⚪ (ক) গরু</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) সাপ</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) বাঘ</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) বাজপাখি</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> গরু সরাসরি উদ্ভিদ (উৎপাদক) খেয়ে বেঁচে থাকে, তাই এটি প্রথম স্তরের খাদক।</div>
+    </div>
+
+    <!-- প্রশ্ন ১১ -->
+    <div class="quiz-card">
+        <div class="question">১১. কোনটি ত্বককণিকা উৎপাদন করে?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) স্কোয়ামাস যোজক টিস্যু</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) কিউবিডাল আবরণী টিস্যু</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) ফাইব্রাস যোজক টিস্যু</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) কলামনার আবরণী টিস্যু</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> কিউবিডাল আবরণী টিস্যু মূলত শোষণ ও ক্ষরণের পাশাপাশি সুরক্ষা আবরণ তৈরি করে।</div>
+    </div>
+
+    <!-- প্রশ্ন ১২ -->
+    <div class="quiz-card">
+        <div class="question">১২. কোন জীবটি শোষন পদ্ধতিতে খাদ্য গ্রহণ করে?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) আম</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) মাশরুম</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) কাঁঠাল গাছ</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) সবুজ শৈবাল</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> মাশরুম (ছত্রাক) মৃতজীবী হিসেবে শোষণের মাধ্যমে পুষ্টি উপাদান গ্রহণ করে।</div>
+    </div>
+
+    <!-- প্রশ্ন ১৩ -->
+    <div class="quiz-card">
+        <div class="question">১৩. কোনটি জীববিজ্ঞানের ফলিত শাখা?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) শারীরবিদ্যা</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) জীবভূগোল</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) হিস্টোলজি</li>
+            <li onclick="checkAnswer(this, true)">⚪ (ঘ) কীটতত্ত্ব</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> কীটতত্ত্ব (Entomology) সরাসরি মানব কল্যাণে প্রযুক্ত একটি ফলিত শাখা।</div>
+    </div>
+
+    <!-- প্রশ্ন ১৪ -->
+    <div class="quiz-card">
+        <div class="question">১৪. কাষ্ঠল উপাদান কোন ধরনের টিস্যু?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) কোলেনকাইমা</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) অ্যারেনকাইমা</li>
+            <li onclick="checkAnswer(this, true)">⚪ (গ) স্ক্লেরেনকাইমা</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) ক্লোরেনকাইমা</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> স্ক্লেরেনকাইমা টিস্যুর কোষ প্রাচীর অত্যন্ত শক্ত ও কাষ্ঠল প্রকৃতির হয়।</div>
+    </div>
+
+    <!-- প্রশ্ন ১৫ -->
+    <div class="quiz-card">
+        <div class="question">১৫. জীববিজ্ঞানের কোন শাখায় হরমোনের কার্যকারিতা নিয়ে আলোচনা করা হয়?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) ফার্মাকোলজি</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) বায়োটেকনোলজি</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) সাইটোলজি</li>
+            <li onclick="checkAnswer(this, true)">⚪ (ঘ) অ্যান্ডোক্রাইনোলজি</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> অ্যান্ডোক্রাইনোলজি শাখায় হরমোন ও নালীহীন গ্রন্থি নিয়ে গবেষণা করা হয়।</div>
+    </div>
+
+    <!-- প্রশ্ন ১৬ -->
+    <div class="quiz-card">
+        <div class="question">১৬. কোনটি অ্যাস্টার-রে তৈরি করে?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) ক্লোরোপ্লাস্ট</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) রাইবোজোম</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) গলজি বস্তু</li>
+            <li onclick="checkAnswer(this, true)">⚪ (ঘ) সেন্ট্রিওল</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> প্রাণীকোষ বিভাজনের সময় সেন্ট্রিওল স্পিন্ডল যন্ত্র ও অ্যাস্টার-রে গঠন করে।</div>
+    </div>
+
+    <!-- প্রশ্ন ১৭ -->
+    <div class="quiz-card">
+        <div class="question">১৭. শ্বসনের হার বেশি হয় উদ্ভিদের—</div>
+        <div class="sub-q">i. ফুলের কুঁড়িতে<br>ii. অঙ্কুরিত বীজে<br>iii. মূলের অগ্রভাগে<br><b>নিচের কোনটি সঠিক?</b></div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, true)">⚪ (ক) i, ii ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) ii ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) i ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) i ও ii</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> উদ্ভিদের সব ধরনের বর্ধনশীল অঞ্চলের কোষে শ্বসনের হার সবচেয়ে বেশি থাকে।</div>
+    </div>
+
+    <!-- প্রশ্ন ১৮ -->
+    <div class="quiz-card">
+        <div class="question">১৮. মানুষের ত্বকে কোন টিস্যু পাওয়া যায়?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) সাধারণ আবরণী টিস্যু</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) কলামনার আবরণী টিস্যু</li>
+            <li onclick="checkAnswer(this, true)">⚪ (গ) স্ট্র্যাটিফাইড আবরণী টিস্যু</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) সিউডো-স্ট্র্যাটিফাইড আবরণী টিস্যু</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> মানুষের ত্বকে বহুস্তর বিশিষ্ট স্ট্র্যাটিফাইড এপিথেলিয়াল টিস্যু থাকে।</div>
+    </div>
+
+    <!-- প্রশ্ন ১৯ -->
+    <div class="quiz-card">
+        <div class="question">১৯. নুষাদ ক্লাসে মাইটোসিস কোষ বিভাজনের একটি পর্যায়ের মডেল পর্যবেক্ষণ করলো যেখানে ক্রোমোজোমগুলো বিষুবীয় অঞ্চলে অবস্থিত। উল্লিখিত পর্যায়টি কী?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) প্রোফেজ</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) মেটাফেজ</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) অ্যানাফেজ</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) টেলোফেজ</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> মেটাফেজ ধাপে সব ক্রোমোজোম স্পিন্ডল যন্ত্রের নিরক্ষীয় বা বিষুবীয় অঞ্চলে এসে অবস্থান নেয়।</div>
+    </div>
+
+    <!-- প্রশ্ন ২০ -->
+    <div class="quiz-card">
+        <div class="question">২০. সবাত শ্বসনের কোন ধাপটি কোষের সাইটোপ্লাজমে ঘটে?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, true)">⚪ (ক) গ্লাইকোলাইসিস</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) ইলেকট্রন প্রবাহতন্ত্র</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) অ্যাসিটাইল কো-এ সৃষ্টি</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) ক্রেবস চক্র</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> গ্লাইকোলাইসিস প্রক্রিয়ার সবকটি বিক্রিয়া কোষের সাইটোপ্লাজমে সম্পন্ন হয়।</div>
+    </div>
+
+    <!-- প্রশ্ন ২১ -->
+    <div class="quiz-card">
+        <div class="question">২১. শ্বসন কার্যে—</div>
+        <div class="sub-q">i. আলোর প্রয়োজন পড়ে<br>ii. কার্বন ডাইঅক্সাইড ব্যবহৃত হয় না<br>iii. পাইরুভিক এসিড জারিত হয়<br><b>নিচের কোনটি সঠিক?</b></div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) i ও ii</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) ii ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) i ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) i, ii ও iii</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> শ্বসনে আলোর প্রত্যক্ষ প্রয়োজন পড়ে না এবং এতে কার্বোহাইড্রেট/পাইরুভিক এসিড জারিত হয়।</div>
+    </div>
+
+    <!-- প্রশ্ন ২২ -->
+    <div class="quiz-card">
+        <div class="question">২২. কোনটি জাইলেম টিস্যুর অংশ?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) সিভনল</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) ভেসেল</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) সিভকোষ</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) সঙ্গী কোষ</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> ভেসেল ও ট্রাকিড হলো জাইলেম টিস্যুর অংশ। বাকিগুলো ফ্লোয়েম টিস্যুর অংশ।</div>
+    </div>
+
+    <!-- প্রশ্ন ২৩ -->
+    <div class="quiz-card">
+        <div class="question">২৩. রিফাত DNA তে বিদ্যমান একটি ক্ষারের কথা বললো যা RNA তে অনুপস্থিত। উক্ত ক্ষারটি কী?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) অ্যাডেনিন</li>
+            <li onclick="checkAnswer(this, false)">⚪ (খ) গুয়ানিন</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) সাইটোসিন</li>
+            <li onclick="checkAnswer(this, true)">⚪ (ঘ) থায়ামিন</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> থায়ামিন (Thymine) কেবল DNA-তেই থাকে, RNA-তে এর স্থানে ইউরাসিল থাকে।</div>
+    </div>
+
+    <!-- উদ্দীপক (২৪ ও ২৫) -->
+    <div class="quiz-card">
+        <div class="question">নিচের উদ্দীপকটি পড়ো এবং ২৪ ও ২৫ নং প্রশ্নের উত্তর দাও:</div>
+        <div class="sub-q">রিফাতদের বাগানে 'X' গাছের একটি ফুলের পরাগরেণু ভেসে এসে অমিদের একটি পতঙ্গ পরাগী ফুলের গর্ভমুণ্ডে পড়লো। পরবর্তী সময়ে পতঙ্গটি পাশের বাড়ির নাবিলদের বাগানের একই প্রজাতির অপর একটি গাছের ফুলে বসে পরাগ স্থানান্তর করলো।</div>
+    </div>
+
+    <!-- প্রশ্ন ২৪ -->
+    <div class="quiz-card">
+        <div class="question">২৪. 'X' গাছের ফুলের বৈশিষ্ট্য কোনটি?</div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) মধুগ্রন্থিবিহীন ফুল</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) পরাগরেণু আঠালো</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) হালকা ওজনের ফুল</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) গর্ভমুণ্ড পালকের ন্যায়</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> পতঙ্গপরাগী ফুলের পরাগরেণু এবং গর্ভমুণ্ড আঠালো ও সুগন্ধযুক্ত হয়ে থাকে।</div>
+    </div>
+
+    <!-- প্রশ্ন ২৫ -->
+    <div class="quiz-card">
+        <div class="question">২৫. রিফাতদের গাছটির বীজ অপেক্ষা নাবিলদের গাছটির বীজ থেকে উৎপন্ন চারাগাছ—</div>
+        <div class="sub-q">i. মাইটোটিকের গুণসম্পন্ন হবে<br>ii. অধিক জীবনী শক্তিসম্পন্ন হবে<br>iii. অধিক অভিযোজনক্ষম হবে<br><b>নিচের কোনটি সঠিক?</b></div>
+        <ul class="options">
+            <li onclick="checkAnswer(this, false)">⚪ (ক) i ও ii</li>
+            <li onclick="checkAnswer(this, true)">⚪ (খ) ii ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (গ) i ও iii</li>
+            <li onclick="checkAnswer(this, false)">⚪ (ঘ) i, ii ও iii</li>
+        </ul>
+        <div class="explanation">💡 <b>ব্যাখ্যা:</b> পর-পরাগায়নের ফলে উৎপন্ন বীজের অঙ্কুরোদ্গম হার বেশি, বীজ অধিক জীবনী শক্তিসম্পন্ন ও নতুন পরিবেশের সাথে অভিযোজনক্ষম হয়।</div>
+    </div>
+
+    <!-- রেজাল্ট কার্ড -->
+    <div id="result-card">
+        <h2>🎉 পরীক্ষা সম্পন্ন হয়েছে! 🎉</h2>
+        <div class="rating-stars" id="star-rating">⭐⭐⭐⭐⭐</div>
+        <div class="score-summary">
+            প্রাপ্ত নম্বর: <b><span id="final-score">০</span> / ২৫</b>
+        </div>
+        <div class="feedback-text" id="feedback-msg">উৎকৃষ্ট পারফরম্যান্স!</div>
+        
+        <div class="btn-container">
+            <button class="btn btn-retry" onclick="restartQuiz()">🔄 পুনরায় পরীক্ষা দিন</button>
+            <button class="btn btn-exit" onclick="exitQuiz()">❌ বের হয়ে যান</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const TOTAL_QUESTIONS = 25;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let quizFinished = false;
+    
+    // ১০ মিনিট = ৬০০ সেকেন্ড
+    let timeRemaining = 600; 
+    let timerInterval = null;
+
+    function startQuiz() {
+        document.getElementById('start-overlay').style.display = 'none';
+        document.getElementById('quiz-wrapper').classList.remove('quiz-container-blur');
+        
+        // টাইমার শুরু
+        timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+        if (quizFinished) return;
+
+        let minutes = Math.floor(timeRemaining / 60);
+        let seconds = timeRemaining % 60;
+
+        let formattedMinutes = minutes < 10 ? '০' + convertToBanglaNumber(minutes) : convertToBanglaNumber(minutes);
+        let formattedSeconds = seconds < 10 ? '০' + convertToBanglaNumber(seconds) : convertToBanglaNumber(seconds);
+
+        document.getElementById('timer-display').innerText = `${formattedMinutes}:${formattedSeconds}`;
+
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            finishQuizDueToTimeOut();
+        }
+        timeRemaining--;
+    }
+
+    function convertToBanglaNumber(n) {
+        const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        return n.toString().split('').map(x => bnDigits[x] || x).join('');
+    }
+
+    function finishQuizDueToTimeOut() {
+        if (quizFinished) return;
+        quizFinished = true;
+
+        // অবশিষ্ট সব প্রশ্ন ডিজেবল করে দেয়া
+        document.querySelectorAll('.options li').forEach(option => {
+            option.classList.add('disabled');
+        });
+
+        alert("⏰ সময় শেষ! আপনার উত্তর জমা নেওয়া হয়েছে।");
+        showResult();
+    }
+
+    function checkAnswer(selectedOption, isCorrect) {
+        if (quizFinished) return;
+
+        let parentUl = selectedOption.parentElement;
+        let allOptions = parentUl.querySelectorAll('li');
+        let card = parentUl.parentElement;
+        let explanation = card.querySelector('.explanation');
+
+        allOptions.forEach(option => option.classList.add('disabled'));
+
+        if (isCorrect) {
+            selectedOption.classList.add('correct-selected');
+            selectedOption.innerHTML = selectedOption.innerHTML.replace('⚪', '✅');
+            correctCount++;
+        } else {
+            selectedOption.classList.add('wrong-selected');
+            selectedOption.innerHTML = selectedOption.innerHTML.replace('⚪', '❌');
+            wrongCount++;
+
+            allOptions.forEach(option => {
+                if (option.getAttribute('onclick').includes('true')) {
+                    option.classList.add('show-correct');
+                    option.innerHTML = option.innerHTML.replace('⚪', '✅');
+                }
+            });
+        }
+
+        let answeredCount = correctCount + wrongCount;
+        document.getElementById('correct-count').innerText = convertToBanglaNumber(correctCount);
+        document.getElementById('wrong-count').innerText = convertToBanglaNumber(wrongCount);
+        document.getElementById('total-answered').innerText = convertToBanglaNumber(answeredCount);
+
+        if(explanation) {
+            explanation.style.display = 'block';
+        }
+
+        if (answeredCount === TOTAL_QUESTIONS) {
+            clearInterval(timerInterval);
+            quizFinished = true;
+            showResult();
+        }
+    }
+
+    function showResult() {
+        let resultCard = document.getElementById('result-card');
+        let finalScore = document.getElementById('final-score');
+        let starRating = document.getElementById('star-rating');
+        let feedbackMsg = document.getElementById('feedback-msg');
+
+        finalScore.innerText = convertToBanglaNumber(correctCount);
+
+        if (correctCount >= 22) {
+            starRating.innerHTML = '⭐⭐⭐⭐⭐';
+            feedbackMsg.innerText = 'অসাধারণ পারফরম্যান্স! আপনার প্রস্তুতি খুবই চমৎকার!';
+        } else if (correctCount >= 18) {
+            starRating.innerHTML = '⭐⭐⭐⭐☆';
+            feedbackMsg.innerText = 'খুবই ভালো পারফরম্যান্স! সামান্য অনুশীলনেই পূর্ণ নম্বর সম্ভব।';
+        } else if (correctCount >= 12) {
+            starRating.innerHTML = '⭐⭐⭐☆☆';
+            feedbackMsg.innerText = 'মোটামুটি ভালো। বিষয়গুলো আরেকবার রিভিশন দেওয়া উচিত।';
+        } else if (correctCount >= 8) {
+            starRating.innerHTML = '⭐⭐☆☆☆';
+            feedbackMsg.innerText = 'আরও অনেক ভালো করতে হবে। আরেকটু মনোযোগ দিয়ে পড়ুন।';
+        } else {
+            starRating.innerHTML = '⭐☆☆☆☆';
+            feedbackMsg.innerText = 'প্রস্তুতি সন্তোষজনক নয়। পুনরায় অধ্যায়গুলো ভালো করে পড়া প্রয়োজন।';
+        }
+
+        resultCard.style.display = 'block';
+        resultCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function restartQuiz() {
+        location.reload();
+    }
+
+    function exitQuiz() {
+        alert("কুইজটিতে অংশগ্রহণ করার জন্য আপনাকে ধন্যবাদ!");
+        window.close();
+        document.body.innerHTML = "<h2 style='color:white; text-align:center; margin-top:20%'>ধন্যবাদ! আপনি কুইজটি সফলভাবে শেষ করেছেন।</h2>";
+    }
+</script>
+
+</body>
+  </html>
