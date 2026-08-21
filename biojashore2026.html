@@ -349,7 +349,7 @@
 <div id="start-overlay">
     <div class="start-card">
         <h3> অনুশীলন মুলক পরীক্ষায় আপনাকে স্বাগতম!</h3>
-        <p>মোট প্রশ্ন: 25টি<br>সময়: 10:00 মিনিট</p>
+        <p>মোট প্রশ্ন: 25টি<br>সময়: 5:00 মিনিট</p>
         <button class="btn btn-start" onclick="startQuiz()">🚀 শুরু করুন </button>
     </div>
 </div>
@@ -740,7 +740,7 @@
         let seconds = timeRemaining % 60;
 
         let formattedMinutes = minutes < 5 ? '০' + convertToBanglaNumber(minutes) : convertToBanglaNumber(minutes);
-        let formattedSeconds = seconds < 60 ? '০' + convertToBanglaNumber(seconds) : convertToBanglaNumber(seconds);
+        let formattedSeconds = seconds < 10 ? '০' + convertToBanglaNumber(seconds) : convertToBanglaNumber(seconds);
 
         document.getElementById('timer-display').innerText = `${formattedMinutes}:${formattedSeconds}`;
 
